@@ -11,11 +11,13 @@ const { errorHandlerMiddleware } = require('./middlewares/errorHandlerMiddleware
 
 const app = express();
 
-connectToMongoDb().then((value) => {
-  if (value) {
+connectToMongoDb().then((isProduction) => {
+  if (isProduction) {
     app.listen(process.env.API_PORT, () => {
       console.log(`Listening on ${process.env.API_PORT}`);
     });
+  } else {
+    console.log(`Environment: ${process.env.NODE_ENV}. Server not started`);
   }
 });
 
