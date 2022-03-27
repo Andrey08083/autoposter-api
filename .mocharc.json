@@ -1,0 +1,16 @@
+{
+  "diff": true,
+  "full-trace": true,
+  "package": "../package.json",
+  "reporter": "spec",
+  "slow": 500,
+  "exit": true,
+  "timeout": 20000,
+  "recursive": true,
+  "parallel": false,
+  "require": ["./tests/testsBoot.js"],
+  "spec": ["tests/**/*.spec.js"],
+  "extension": ["js"],
+  "ui": "bdd",
+  "color": true
+}
