@@ -3,7 +3,7 @@ module.exports = {
     USER_ROUTER: '/user',
     REGISTRATION: '/register',
     LOGIN: '/login',
-    LOGOUT_USER: '/logout/:token',
+    LOGOUT_USER: '/logout',
     REFRESH_USER_TOKEN: '/refresh',
     GET_USER: '/',
     UPDATE_USER: '/update',

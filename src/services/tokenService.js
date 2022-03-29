@@ -2,9 +2,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const tokenModel = require('../models/token');
 const BaseService = require('./baseService');
-const ResponseObject = require('../helpers/responseObject');
-const { BAD_REQUEST } = require('../constants/responseStatus');
-const {ERRORS} = require("../constants/validation");
 
 class TokenService extends BaseService {
   createToken(user, timeToLive) {
@@ -29,7 +26,6 @@ class TokenService extends BaseService {
   }
 
   refreshUserToken = async (oldRefreshToken, userData) => {
-    const response = new ResponseObject();
     const accessToken = this.createAccessToken(userData);
     const refreshToken = this.createRefreshToken(userData);
 
@@ -39,14 +35,7 @@ class TokenService extends BaseService {
       { new: true },
     );
 
-    if (!updateResult) {
-      response.setStatus(BAD_REQUEST);
-      response.setData({ errors: [ERRORS.TOKEN_NOT_FOUND] });
-      return response;
-    }
-
-    response.setData(updateResult.toJSON());
-    return response;
+    return updateResult.toJSON();
   };
 }
 

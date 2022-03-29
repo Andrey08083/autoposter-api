@@ -1,14 +1,17 @@
+const supertest = require('supertest');
 const { expect } = require('chai');
+
+const app = require('../../../src');
 const tokenService = require('../../../src/services/tokenService');
 const userService = require('../../../src/services/userService');
 const registerUserFixture = require('../../fixtures/registerUserFixture.json');
 const { USER_STATUS } = require('../../../src/constants/userStatus');
 const { dropTestingDatabase } = require('../../testUtils');
-const ResponseObject = require('../../../src/helpers/responseObject');
-const { OK, BAD_REQUEST} = require('../../../src/constants/responseStatus');
-const {ERRORS} = require("../../../src/constants/validation");
+const { OK, UNAUTHORIZED } = require('../../../src/constants/responseStatus');
+const { ERRORS } = require('../../../src/constants/validation');
+const { USER } = require('../../../src/constants/routes');
 
-describe('Token service unit tests', () => {
+describe('Refresh token unit tests', () => {
   let user;
   let token;
   beforeEach(async () => {
@@ -16,7 +19,7 @@ describe('Token service unit tests', () => {
     await userService.registerUser(registerUserFixture);
     user = await userService.findOne();
     await userService.findOneByIdAndUpdate(user._id, { status: USER_STATUS.CONFIRMED });
-    ({ token } = (await userService.loginUser({ email, password })).getData());
+    ({ token } = await userService.loginUser({ email, password }));
   });
 
   afterEach(async () => {
@@ -24,22 +27,22 @@ describe('Token service unit tests', () => {
   });
 
   it('should refresh token if it persists in database and return new pair of tokens', async () => {
-    const refreshResult = await tokenService.refreshUserToken(token.refreshToken, user.toJSON());
-
-    expect(refreshResult).to.instanceof(ResponseObject);
-    expect(refreshResult.getStatus()).to.eq(OK);
+    const { body: responseBody } = await supertest(app)
+      .post(`${USER.USER_ROUTER}${USER.REFRESH_USER_TOKEN}`)
+      .set('authorization', `Bearer ${token.refreshToken}`)
+      .expect(OK);
 
     const updatedTokenFromDatabase = await tokenService.findOne();
-    expect(refreshResult.getData()).to.deep.eq(updatedTokenFromDatabase.toJSON());
+    expect(responseBody).to.deep.eq(updatedTokenFromDatabase.toJSON());
   });
 
   it('should not refresh token if it not persists in database', async () => {
     const notDatabaseRefreshToken = tokenService.createRefreshToken(user);
-    const refreshResult = await tokenService
-      .refreshUserToken(notDatabaseRefreshToken, user.toJSON());
+    const { body: responseBody } = await supertest(app)
+      .post(`${USER.USER_ROUTER}${USER.REFRESH_USER_TOKEN}`)
+      .set('authorization', `Bearer ${notDatabaseRefreshToken}`)
+      .expect(UNAUTHORIZED);
 
-    expect(refreshResult).to.instanceof(ResponseObject);
-    expect(refreshResult.getStatus()).to.eq(BAD_REQUEST);
-    expect(refreshResult.getData()).to.deep.eq({ errors: [ERRORS.TOKEN_NOT_FOUND] });
+    expect(responseBody).to.deep.eq({ errors: [ERRORS.TOKEN_NOT_FOUND] });
   });
 });

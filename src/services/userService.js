@@ -5,20 +5,19 @@ const userModel = require('../models/user');
 const tokenService = require('./tokenService');
 const { USER_STATUS } = require('../constants/userStatus');
 const { ERRORS } = require('../constants/validation');
-const ResponseObject = require('../helpers/responseObject');
 const { NOT_FOUND, BAD_REQUEST } = require('../constants/responseStatus');
 const { userLoginSchema, userRegisterSchema } = require('../validation/userSchema');
 const schemaValidator = require('../validation/schemaValidator');
+const ApiError = require('../helpers/apiError');
 
 class UserService extends BaseService {
   /**
    * @param userData
-   * @returns {Promise<ResponseObject>}
+   * @returns {Promise<{user: *, token: *}>}
    */
 
   async loginUser(userData) {
     schemaValidator(userLoginSchema, userData);
-    const response = new ResponseObject();
 
     const user = await this.findOne(
       { email: userData.email },
@@ -26,23 +25,17 @@ class UserService extends BaseService {
     );
 
     if (!user) {
-      response.setStatus(NOT_FOUND);
-      response.setData({ errors: [ERRORS.USER_NOT_FOUND] });
-      return response;
+      throw new ApiError(NOT_FOUND, ERRORS.USER_NOT_FOUND);
     }
 
     const compareResult = await bcrypt.compare(userData.password, user.password);
 
     if (!compareResult) {
-      response.setStatus(BAD_REQUEST);
-      response.setData({ errors: [ERRORS.WRONG_PASSWORD] });
-      return response;
+      throw new ApiError(BAD_REQUEST, ERRORS.WRONG_PASSWORD);
     }
 
     if (user.status !== USER_STATUS.CONFIRMED) {
-      response.setStatus(BAD_REQUEST);
-      response.setData({ errors: [ERRORS.USER_NOT_CONFIRMED] });
-      return response;
+      throw new ApiError(BAD_REQUEST, ERRORS.USER_NOT_CONFIRMED);
     }
 
     const accessToken = tokenService.createAccessToken(user.toJSON());
@@ -50,38 +43,25 @@ class UserService extends BaseService {
 
     const token = await tokenService.create({ accessToken, refreshToken, user: user._id });
 
-    response.setData({ user: user.toJSON(), token: token.toJSON() });
-    return response;
+    return { user: user.toJSON(), token: token.toJSON() };
   }
 
   async logoutUser(userId, userToken) {
-    const response = new ResponseObject();
-    const logoutResult = await tokenService.deleteOne({ user: userId, accessToken: userToken });
-
-    if (!logoutResult.deletedCount) {
-      response.setStatus(BAD_REQUEST);
-      response.setData({ errors: [ERRORS.ALREADY_LOGGED_OUT] });
-    }
-    return response;
+    await tokenService.deleteOne({ user: userId, accessToken: userToken });
   }
 
   async registerUser(userData) {
     schemaValidator(userRegisterSchema, userData);
-    const response = new ResponseObject();
 
     const possibleUser = await this.findOne({ email: userData.email });
 
     if (possibleUser) {
-      response.setStatus(BAD_REQUEST);
-      response.setData({ errors: [ERRORS.EMAIL_ALREADY_TAKEN] });
-      return response;
+      throw new ApiError(BAD_REQUEST, ERRORS.EMAIL_ALREADY_TAKEN);
     }
 
     const hashedPassword = await bcrypt.hash(userData.password, process.env.BCRYPT_SALT);
 
     await this.create({ ...userData, password: hashedPassword });
-
-    return response;
   }
 }
 
