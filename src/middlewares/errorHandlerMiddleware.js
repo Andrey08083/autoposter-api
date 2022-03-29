@@ -1,11 +1,12 @@
-const ResponseObject = require('../helpers/responseObject');
+const ApiError = require('../helpers/apiError');
+const { BAD_REQUEST } = require('../constants/responseStatus');
 
 const errorHandlerMiddleware = ((err, req, res, next) => {
   console.error(err);
-  if (err instanceof ResponseObject) {
-    return res.status(err.getStatus()).send(err.getData());
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).send(err.formatErrorObject());
   }
-  return res.status(500).send({ error: 'Unhandled error' });
+  return res.status(BAD_REQUEST).send(err);
 });
 
 module.exports = {

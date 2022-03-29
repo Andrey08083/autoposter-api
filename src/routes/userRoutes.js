@@ -14,8 +14,6 @@ const {
   },
 } = require('../constants/routes');
 const tokenController = require('../controllers/tokenController');
-const { validationMiddleware } = require('../middlewares/validationMiddleware');
-const { userLoginSchema, userRegisterSchema } = require('../validation/userSchema');
 
 /* /user/register */
 router.post(REGISTRATION, userController.registerUser);

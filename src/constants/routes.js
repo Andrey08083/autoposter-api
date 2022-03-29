@@ -7,6 +7,7 @@ module.exports = {
     REFRESH_USER_TOKEN: '/refresh',
     GET_USER: '/',
     UPDATE_USER: '/update',
+    VERIFY_USER_ACCOUNT: '/verify',
   },
   TOKEN: {
     TOKEN_ROUTER: '/token',
@@ -15,6 +16,6 @@ module.exports = {
   },
   MAIL: {
     MAIL_ROUTER: '/mail',
-    RESET_PASSWORD: '/reset-password',
+    RESET_PASSWORD: '/resetPassword',
   },
 };
