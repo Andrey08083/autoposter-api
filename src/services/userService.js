@@ -6,8 +6,6 @@ const tokenService = require('./tokenService');
 const { USER_STATUS } = require('../constants/userStatus');
 const { ERRORS } = require('../constants/validation');
 const { NOT_FOUND, BAD_REQUEST } = require('../constants/responseStatus');
-const { userLoginSchema, userRegisterSchema } = require('../validation/userSchema');
-const schemaValidator = require('../validation/schemaValidator');
 const ApiError = require('../helpers/apiError');
 
 class UserService extends BaseService {
@@ -17,11 +15,8 @@ class UserService extends BaseService {
    */
 
   async loginUser(userData) {
-    schemaValidator(userLoginSchema, userData);
-
     const user = await this.findOne(
       { email: userData.email },
-      { resetPasswordToken: 0, confirmationCode: 0 },
     );
 
     if (!user) {
@@ -51,8 +46,6 @@ class UserService extends BaseService {
   }
 
   async registerUser(userData) {
-    schemaValidator(userRegisterSchema, userData);
-
     const possibleUser = await this.findOne({ email: userData.email });
 
     if (possibleUser) {

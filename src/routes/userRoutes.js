@@ -14,12 +14,14 @@ const {
   },
 } = require('../constants/routes');
 const tokenController = require('../controllers/tokenController');
+const { validationMiddleware } = require('../middlewares/validationMiddleware');
+const { userRegisterSchema, userLoginSchema } = require('../validation/userSchema');
 
 /* /user/register */
-router.post(REGISTRATION, userController.registerUser);
+router.post(REGISTRATION, validationMiddleware(userRegisterSchema), userController.registerUser);
 
 /* /user/login */
-router.post(LOGIN, userController.loginUser);
+router.post(LOGIN, validationMiddleware(userLoginSchema), userController.loginUser);
 
 /* /user/refresh */
 router.post(REFRESH_USER_TOKEN, verifyRefreshToken, tokenController.refreshUserToken);

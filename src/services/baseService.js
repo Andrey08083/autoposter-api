@@ -31,10 +31,6 @@ class Service {
     return this.model.findOneAndUpdate({ _id: id }, { $set: body }, options);
   }
 
-  deleteMany(query) {
-    return this.model.deleteMany(query);
-  }
-
   updateMany(criteria, updateData, options) {
     return this.model.updateMany(criteria, updateData, options);
   }
