@@ -17,6 +17,7 @@ module.exports = {
     TELEGRAM_ROUTER: '/telegram',
     GET_TELEGRAM_CHANNELS: '/channels',
     CONNECT_TELEGRAM: '/connect',
+    SEND_POST: '/sendPost',
   },
   TOKEN: {
     TOKEN_ROUTER: '/token',

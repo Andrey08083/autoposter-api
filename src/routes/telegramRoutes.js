@@ -7,6 +7,7 @@ const {
   TELEGRAM: {
     GET_TELEGRAM_CHANNELS,
     CONNECT_TELEGRAM,
+    SEND_POST,
   },
 } = require('../constants/routes');
 
@@ -15,5 +16,8 @@ router.get(GET_TELEGRAM_CHANNELS, verifyAccessToken, telegramController.getTeleg
 
 /* /workspace/telegram/connect */
 router.get(CONNECT_TELEGRAM, verifyAccessToken, telegramController.getTelegramConnectToken);
+
+/* /workspace/telegram/sendPost */
+router.post(SEND_POST, verifyAccessToken, telegramController.sendPostToTelegramChannel);
 
 module.exports = router;

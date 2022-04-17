@@ -24,5 +24,7 @@ module.exports = {
     USER_NOT_CONFIRMED: 'User not confirmed',
     ACCESS_DENIED: 'Access denied',
     TOKEN_NOT_FOUND: 'Token not found',
+
+    TELEGRAM_CHANNEL_NOT_FOUND: 'Telegram channel not found',
   },
 };
