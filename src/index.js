@@ -4,12 +4,14 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const { connectToMongoDb } = require('./database/connector');
-const { USER, TOKEN } = require('./constants/routes');
+const { USER, TOKEN, WORKSPACE } = require('./constants/routes');
 const userRouter = require('./routes/userRoutes');
 const tokenRouter = require('./routes/tokenRoutes');
+const workspaceRouter = require('./routes/workspaceRoutes');
 const { errorHandlerMiddleware } = require('./middlewares/errorHandlerMiddleware');
 
 const app = express();
+require('./bot');
 
 connectToMongoDb().then((isProduction) => {
   if (isProduction) {
@@ -26,6 +28,8 @@ app.use(express.json());
 app.use(cors());
 
 app.use(USER.USER_ROUTER, userRouter);
+
+app.use(WORKSPACE.WORKSPACE_ROUTER, workspaceRouter);
 
 // NOTE: SHOULD BE EXPOSED ONLY IN TEST ENVIRONMENT
 if (process.env.NODE_ENV === 'test') {

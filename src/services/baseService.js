@@ -23,7 +23,7 @@ class Service {
     return this.model.create(data);
   }
 
-  findById(id) {
+  findOneById(id) {
     return this.model.findOne({ _id: id });
   }
 

@@ -9,6 +9,15 @@ module.exports = {
     UPDATE_USER: '/update',
     VERIFY_USER_ACCOUNT: '/verify',
   },
+  WORKSPACE: {
+    WORKSPACE_ROUTER: '/workspace',
+    GET_WORKSPACE: '/',
+  },
+  TELEGRAM: {
+    TELEGRAM_ROUTER: '/telegram',
+    GET_TELEGRAM_CHANNELS: '/channels',
+    CONNECT_TELEGRAM: '/connect',
+  },
   TOKEN: {
     TOKEN_ROUTER: '/token',
     ACCESS_TOKEN: '/accessToken',

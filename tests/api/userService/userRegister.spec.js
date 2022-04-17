@@ -9,6 +9,7 @@ const { BAD_REQUEST, OK } = require('../../../src/constants/responseStatus');
 const { ERRORS } = require('../../../src/constants/validation');
 const app = require('../../../src');
 const { USER } = require('../../../src/constants/routes');
+const { USER_STATUS } = require('../../../src/constants/userStatus');
 
 describe('User register tests', () => {
   afterEach(async () => {
@@ -21,7 +22,9 @@ describe('User register tests', () => {
       .send(registerUserFixture)
       .expect(OK);
 
-    expect(responseBody).to.deep.eq({});
+    expect(responseBody).to.have.property('email', registerUserFixture.email);
+    expect(responseBody).to.have.property('userName', registerUserFixture.userName);
+    expect(responseBody).to.have.property('status', USER_STATUS.INVITED);
 
     const user = await userService.findOne({ email: registerUserFixture.email });
     expect(user).to.have.property('id');

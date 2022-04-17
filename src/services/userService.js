@@ -54,7 +54,7 @@ class UserService extends BaseService {
 
     const hashedPassword = await bcrypt.hash(userData.password, process.env.BCRYPT_SALT);
 
-    await this.create({ ...userData, password: hashedPassword });
+    return this.create({ ...userData, password: hashedPassword });
   }
 }
 

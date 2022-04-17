@@ -34,6 +34,7 @@ const verifyAccessToken = (req, res, next) => {
 
 const verifyRefreshToken = (req, res, next) => {
   const bearerHeader = req.headers.authorization;
+  console.log(bearerHeader)
   if (typeof (bearerHeader) !== 'string') {
     return next(new ApiError(UNAUTHORIZED, ERRORS.TOKEN_NOT_FOUND));
   }
