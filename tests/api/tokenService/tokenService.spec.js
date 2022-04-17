@@ -5,7 +5,6 @@ const app = require('../../../src');
 const tokenService = require('../../../src/services/tokenService');
 const userService = require('../../../src/services/userService');
 const registerUserFixture = require('../../fixtures/registerUserFixture.json');
-const { USER_STATUS } = require('../../../src/constants/userStatus');
 const { dropTestingDatabase } = require('../../testUtils');
 const { OK, UNAUTHORIZED } = require('../../../src/constants/responseStatus');
 const { ERRORS } = require('../../../src/constants/validation');
@@ -18,7 +17,6 @@ describe('Refresh token unit tests', () => {
     const { email, password } = registerUserFixture;
     await userService.registerUser(registerUserFixture);
     user = await userService.findOne();
-    await userService.findOneByIdAndUpdate(user._id, { status: USER_STATUS.CONFIRMED });
     ({ token } = await userService.loginUser({ email, password }));
   });
 

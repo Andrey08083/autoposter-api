@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const BaseService = require('./baseService');
 const userModel = require('../models/user');
 const tokenService = require('./tokenService');
-const { USER_STATUS } = require('../constants/userStatus');
 const { ERRORS } = require('../constants/validation');
 const { NOT_FOUND, BAD_REQUEST } = require('../constants/responseStatus');
 const ApiError = require('../helpers/apiError');
@@ -27,10 +26,6 @@ class UserService extends BaseService {
 
     if (!compareResult) {
       throw new ApiError(BAD_REQUEST, ERRORS.WRONG_PASSWORD);
-    }
-
-    if (user.status !== USER_STATUS.CONFIRMED) {
-      throw new ApiError(BAD_REQUEST, ERRORS.USER_NOT_CONFIRMED);
     }
 
     const accessToken = tokenService.createAccessToken(user.toJSON());

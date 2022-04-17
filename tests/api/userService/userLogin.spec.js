@@ -13,24 +13,11 @@ const {
   UNAUTHORIZED,
 } = require('../../../src/constants/responseStatus');
 const { ERRORS } = require('../../../src/constants/validation');
-const { USER_STATUS } = require('../../../src/constants/userStatus');
 const { USER } = require('../../../src/constants/routes');
 
 describe('User login tests', () => {
   afterEach(async () => {
     await dropTestingDatabase();
-  });
-
-  it('should not login user if user is not confirmed', async () => {
-    await userService.registerUser(registerUserFixture);
-
-    const { email, password } = registerUserFixture;
-    const { body: responseBody } = await supertest(app)
-      .post(`${USER.USER_ROUTER}${USER.LOGIN}`)
-      .send({ email, password })
-      .expect(BAD_REQUEST);
-
-    expect(responseBody).to.deep.eq({ errors: [ERRORS.USER_NOT_CONFIRMED] });
   });
 
   it('should not login user if user does not exist', async () => {
@@ -44,9 +31,9 @@ describe('User login tests', () => {
     expect(responseBody).to.deep.eq({ errors: [ERRORS.USER_NOT_FOUND] });
   });
 
-  it('should not login user when user is not confirmed and password is not correct', async () => {
-    await userService.registerUser(registerUserFixture);
+  it('should not login user when user password is not correct', async () => {
     const { email } = registerUserFixture;
+    await userService.registerUser(registerUserFixture);
 
     const { body: responseBody } = await supertest(app)
       .post(`${USER.USER_ROUTER}${USER.LOGIN}`)
@@ -56,31 +43,10 @@ describe('User login tests', () => {
     expect(responseBody).to.deep.eq({ errors: [ERRORS.WRONG_PASSWORD] });
   });
 
-  it('should not login user when user is confirmed and password is not correct', async () => {
-    const { email } = registerUserFixture;
-    await userService.registerUser(registerUserFixture);
-    const registeredUser = await userService.findOne({ email });
-    await userService.findOneByIdAndUpdate(registeredUser._id, { status: USER_STATUS.CONFIRMED });
-
-    const { body: responseBody } = await supertest(app)
-      .post(`${USER.USER_ROUTER}${USER.LOGIN}`)
-      .send({ email, password: 'incorrect@#123!Pass' })
-      .expect(BAD_REQUEST);
-
-    expect(responseBody).to.deep.eq({ errors: [ERRORS.WRONG_PASSWORD] });
-  });
-
-  it('should login user when user is confirmed and password is correct', async () => {
+  it('should login user when user password is correct', async () => {
     const { email, password } = registerUserFixture;
     await userService.registerUser(registerUserFixture);
     const registeredUser = await userService.findOne({ email });
-
-    const updateResult = await userService
-      .findOneByIdAndUpdate(
-        registeredUser._id,
-        { status: USER_STATUS.CONFIRMED },
-        { new: true },
-      );
 
     const { body: responseBody } = await supertest(app)
       .post(`${USER.USER_ROUTER}${USER.LOGIN}`)
@@ -92,7 +58,7 @@ describe('User login tests', () => {
     expect(responseBody).to.have.property('user');
     expect(responseBody).to.have.property('token');
 
-    expect(responseBody.user).to.deep.eq(updateResult.toJSON());
+    expect(responseBody.user).to.deep.eq(registeredUser.toJSON());
 
     expect(responseBody.token).to.have.property('accessToken');
     expect(responseBody.token).to.have.property('refreshToken');
@@ -100,17 +66,10 @@ describe('User login tests', () => {
     expect(responseBody.token).to.deep.eq(token.toJSON());
   });
 
-  it('should create new token pair when confirmed user logs in', async () => {
+  it('should create new token pair when user logs in', async () => {
     const { email, password } = registerUserFixture;
     await userService.registerUser(registerUserFixture);
     const registeredUser = await userService.findOne({ email });
-
-    const updateResult = await userService
-      .findOneByIdAndUpdate(
-        registeredUser._id,
-        { status: USER_STATUS.CONFIRMED },
-        { new: true },
-      );
 
     const { body: firstLoginResponseBody } = await supertest(app)
       .post(`${USER.USER_ROUTER}${USER.LOGIN}`)
@@ -122,7 +81,7 @@ describe('User login tests', () => {
     expect(firstLoginResponseBody).to.have.property('user');
     expect(firstLoginResponseBody).to.have.property('token');
 
-    expect(firstLoginResponseBody.user).to.deep.eq(updateResult.toJSON());
+    expect(firstLoginResponseBody.user).to.deep.eq(registeredUser.toJSON());
 
     expect(firstLoginResponseBody.token).to.have.property('accessToken');
     expect(firstLoginResponseBody.token).to.have.property('refreshToken');
@@ -139,7 +98,7 @@ describe('User login tests', () => {
     expect(secondLoginResponseBody).to.have.property('user');
     expect(secondLoginResponseBody).to.have.property('token');
 
-    expect(secondLoginResponseBody.user).to.deep.eq(updateResult.toJSON());
+    expect(secondLoginResponseBody.user).to.deep.eq(registeredUser.toJSON());
 
     expect(secondLoginResponseBody.token).to.have.property('accessToken');
     expect(secondLoginResponseBody.token).to.have.property('refreshToken');
@@ -153,13 +112,6 @@ describe('User login tests', () => {
   it('should logout user and remove it\'s token from database', async () => {
     const { email, password } = registerUserFixture;
     await userService.registerUser(registerUserFixture);
-    const registeredUser = await userService.findOne({ email });
-
-    await userService
-      .findOneByIdAndUpdate(
-        registeredUser._id,
-        { status: USER_STATUS.CONFIRMED },
-      );
 
     await userService.loginUser({ email, password });
     await userService.loginUser({ email, password });
@@ -182,13 +134,6 @@ describe('User login tests', () => {
   it('should return error if user tries to log out with already invalid token', async () => {
     const { email, password } = registerUserFixture;
     await userService.registerUser(registerUserFixture);
-    const registeredUser = await userService.findOne({ email });
-
-    await userService
-      .findOneByIdAndUpdate(
-        registeredUser._id,
-        { status: USER_STATUS.CONFIRMED },
-      );
 
     await userService.loginUser({ email, password });
     await userService.loginUser({ email, password });

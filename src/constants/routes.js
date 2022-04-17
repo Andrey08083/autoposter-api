@@ -23,8 +23,4 @@ module.exports = {
     ACCESS_TOKEN: '/accessToken',
     REFRESH_TOKEN: '/refreshToken',
   },
-  MAIL: {
-    MAIL_ROUTER: '/mail',
-    RESET_PASSWORD: '/resetPassword',
-  },
 };

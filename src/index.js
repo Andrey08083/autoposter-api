@@ -4,7 +4,11 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const { connectToMongoDb } = require('./database/connector');
-const { USER, TOKEN, WORKSPACE } = require('./constants/routes');
+const {
+  USER,
+  TOKEN,
+  WORKSPACE,
+} = require('./constants/routes');
 const userRouter = require('./routes/userRoutes');
 const tokenRouter = require('./routes/tokenRoutes');
 const workspaceRouter = require('./routes/workspaceRoutes');
@@ -23,7 +27,7 @@ connectToMongoDb().then((isProduction) => {
   }
 });
 
-app.options('*', cors());
+app.use('*', cors());
 
 app.use(logger('dev'));
 app.use(express.json());
