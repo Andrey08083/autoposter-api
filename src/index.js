@@ -23,9 +23,10 @@ connectToMongoDb().then((isProduction) => {
   }
 });
 
+app.options('*', cors());
+
 app.use(logger('dev'));
 app.use(express.json());
-app.use(cors());
 
 app.use(USER.USER_ROUTER, userRouter);
 
