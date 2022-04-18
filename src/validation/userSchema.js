@@ -16,14 +16,31 @@ const nameRegex = /^[^\s][A-Za-z][ A-Za-z_]{5,30}$/;
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{5,}$/;
 
 const userLoginSchema = joi.object({
-  email: joi.string().email().lowercase().required(),
-  password: joi.string().regex(passwordRegex).required(),
+  email: joi.string()
+    .email()
+    .lowercase()
+    .label('emailValidation')
+    .required(),
+  password: joi.string()
+    .regex(passwordRegex)
+    .label('passwordValidation')
+    .required(),
 });
 
 const userRegisterSchema = joi.object({
-  email: joi.string().email().lowercase().required(),
-  userName: joi.string().regex(nameRegex).required(),
-  password: joi.string().regex(passwordRegex).required(),
+  email: joi.string()
+    .email()
+    .lowercase()
+    .label('emailValidation')
+    .required(),
+  userName: joi.string()
+    .regex(nameRegex)
+    .label('userNameValidation')
+    .required(),
+  password: joi.string()
+    .regex(passwordRegex)
+    .label('passwordValidation')
+    .required(),
 });
 
 const userUpdateSchema = joi.object({

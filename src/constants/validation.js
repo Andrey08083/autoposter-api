@@ -27,4 +27,14 @@ module.exports = {
 
     TELEGRAM_CHANNEL_NOT_FOUND: 'Telegram channel not found',
   },
+  CUSTOM_ERROR_MESSAGES: {
+    'email.emailValidation': 'Incorrect email',
+    'userName.userNameValidation': 'Incorrect username. '
+      + 'Should consist from two words, e.g. First name, Last name',
+    'password.passwordValidation': 'Incorrect password. Requirements: '
+      + 'At least one number, '
+      + 'At least one capital letter, '
+      + 'Any character expect line breaks, '
+      + '5 chars min',
+  },
 };
