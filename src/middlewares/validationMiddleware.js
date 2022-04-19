@@ -10,7 +10,7 @@ const validationMiddleware = (validationSchema) => (req, res, next) => {
   if (validationResult.error) {
     const errors = parseErrors(validationResult);
 
-    return next(new ApiError(BAD_REQUEST, errors));
+    return next(new ApiError(BAD_REQUEST, ...errors));
   }
   return next();
 };

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const tokenModel = require('../models/token');
 const userModel = require('../models/user');
+const workspaceModel = require('../models/workspace');
 const { ERRORS } = require('../constants/validation');
 const ApiError = require('../helpers/apiError');
 const { UNAUTHORIZED } = require('../constants/responseStatus');
@@ -25,8 +26,11 @@ const verifyAccessToken = (req, res, next) => {
       return next(new ApiError(UNAUTHORIZED, ERRORS.USER_NOT_FOUND));
     }
 
+    const workspace = await workspaceModel.findOne({ user: result.user._id });
+
     req.token = databaseToken.toJSON();
     req.user = databaseUser.toJSON();
+    req.workspace = workspace.toJSON();
     return next();
   });
   return null;
@@ -34,7 +38,7 @@ const verifyAccessToken = (req, res, next) => {
 
 const verifyRefreshToken = (req, res, next) => {
   const bearerHeader = req.headers.authorization;
-  console.log(bearerHeader)
+
   if (typeof (bearerHeader) !== 'string') {
     return next(new ApiError(UNAUTHORIZED, ERRORS.TOKEN_NOT_FOUND));
   }

@@ -17,6 +17,6 @@ const {
 router.get(GET_WORKSPACE, verifyAccessToken, workspaceController.getWorkspace);
 
 /* /workspace/telegram/* */
-router.use(TELEGRAM_ROUTER, telegramRoutes);
+router.use(TELEGRAM_ROUTER, verifyAccessToken, telegramRoutes);
 
 module.exports = router;

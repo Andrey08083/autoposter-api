@@ -42,4 +42,9 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 app.use(errorHandlerMiddleware);
+
+process.on('uncaughtException', (err) => {
+  console.error('Caught exception: ', err);
+});
+
 module.exports = app;
