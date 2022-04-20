@@ -41,7 +41,7 @@ bot.onText(/\/connect (.+)/, async (msg, match) => {
  * Try to add channel into integrations
  */
 bot.on('message', async (msg) => {
-  if (msg.text && msg.text.startsWith('/connect')) {
+  if (msg.text && (msg.text.startsWith('/connect') || msg.text.startsWith('/start'))) {
     return undefined;
   }
 
