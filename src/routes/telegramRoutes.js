@@ -20,6 +20,9 @@ router.get(GET_TELEGRAM_CHANNELS, telegramController.getTelegramChannels);
 /* /workspace/telegram/connect */
 router.get(CONNECT_TELEGRAM, telegramController.getTelegramConnectToken);
 
+/* /workspace/telegram/:telegramChannelId */
+router.delete('/:telegramChannelId', telegramController.removeTelegramChannelById);
+
 /* /workspace/telegram/posts/* */
 router.use(POSTS_ROUTER, telegramPostsRouter);
 

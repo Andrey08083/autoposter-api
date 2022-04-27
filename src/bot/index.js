@@ -6,7 +6,7 @@ const workspaceService = require('../services/workspaceService');
 const { getMatchesFromRegExp } = require('../helpers/regExp');
 const { connectTokenRegExp } = require('../constants/regExp');
 
-const bot = new TelegramBot(process.env.TELEGRAM_AUTH_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.TELEGRAM_AUTH_BOT_TOKEN);
 
 bot.onText(/\/connect (.+)/, async (msg, match) => {
   const chatId = msg.chat.id;

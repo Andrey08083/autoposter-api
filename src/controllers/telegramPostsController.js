@@ -30,11 +30,11 @@ const sendPostToTelegramChannel = async (req, res, next) => {
     }).populate('integration');
 
     if (!telegramChannel) {
-      next(new ApiError(ERRORS.TELEGRAM_CHANNEL_NOT_FOUND, BAD_REQUEST));
+      return next(new ApiError(BAD_REQUEST, ERRORS.TELEGRAM_CHANNEL_NOT_FOUND));
     }
 
     if (telegramChannel.integration.workspace.toString() !== workspace._id.toString()) {
-      next(new ApiError(ERRORS.TELEGRAM_CHANNEL_NOT_FOUND, BAD_REQUEST));
+      return next(new ApiError(BAD_REQUEST, ERRORS.TELEGRAM_CHANNEL_NOT_FOUND));
     }
 
     const preparedMessage = postText.replace(removeHtmlTagsRegExp, '');
@@ -47,9 +47,9 @@ const sendPostToTelegramChannel = async (req, res, next) => {
       text: preparedMessage,
     });
 
-    res.sendStatus(OK);
+    return res.sendStatus(OK);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 };
 

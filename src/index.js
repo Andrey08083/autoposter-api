@@ -15,11 +15,12 @@ const workspaceRouter = require('./routes/workspaceRoutes');
 const { errorHandlerMiddleware } = require('./middlewares/errorHandlerMiddleware');
 
 const app = express();
-require('./bot');
+const bot = require('./bot');
 
 connectToMongoDb().then((isProduction) => {
   if (isProduction) {
     app.listen(process.env.API_PORT, () => {
+      bot.startPolling({ restart: true });
       console.log(`Listening on ${process.env.API_PORT}`);
     });
   } else {

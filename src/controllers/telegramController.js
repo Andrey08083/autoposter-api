@@ -1,6 +1,7 @@
 const workspaceService = require('../services/workspaceService');
 const integrationService = require('../services/integrationService');
 const telegramChannelService = require('../services/telegramChannelService');
+const { NOT_FOUND, OK } = require('../constants/responseStatus');
 
 const getTelegramChannels = async (req, res, next) => {
   try {
@@ -32,7 +33,28 @@ const getTelegramConnectToken = async (req, res, next) => {
   }
 };
 
+const removeTelegramChannelById = async (req, res, next) => {
+  try {
+    const { telegramChannelId } = req.params;
+    const integration = await integrationService.findOne({ workspace: req.workspace._id });
+
+    const deleteResult = await telegramChannelService.deleteOne({
+      channelId: telegramChannelId,
+      integration: integration._id,
+    });
+
+    if (deleteResult.deletedCount) {
+      return res.sendStatus(OK);
+    }
+
+    return res.sendStatus(NOT_FOUND);
+  } catch (e) {
+    return next(e);
+  }
+};
+
 module.exports = {
   getTelegramChannels,
   getTelegramConnectToken,
+  removeTelegramChannelById,
 };

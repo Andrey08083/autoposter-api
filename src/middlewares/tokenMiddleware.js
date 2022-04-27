@@ -28,9 +28,13 @@ const verifyAccessToken = (req, res, next) => {
 
     const workspace = await workspaceModel.findOne({ user: result.user._id });
 
+    if (workspace) {
+      req.workspace = workspace.toJSON();
+    }
+
     req.token = databaseToken.toJSON();
     req.user = databaseUser.toJSON();
-    req.workspace = workspace.toJSON();
+
     return next();
   });
   return null;
