@@ -36,5 +36,6 @@ module.exports = {
       + 'At least one capital letter, '
       + 'Any character expect line breaks, '
       + '5 chars min',
+    'sendAt.sendAtValidation': 'Post time should be ahead of two minutes of current time',
   },
 };

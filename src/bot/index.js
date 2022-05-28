@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const TelegramBot = require('node-telegram-bot-api');
 const integrationService = require('../services/integrationService');
-const telegramChannelService = require('../services/telegramChannelService');
+const telegramChannelModel = require('../models/telegramChannel');
 const workspaceService = require('../services/workspaceService');
 const { getMatchesFromRegExp } = require('../helpers/regExp');
 const { connectTokenRegExp } = require('../constants/regExp');
@@ -65,7 +65,7 @@ bot.on('message', async (msg) => {
     }
 
     // To avoid duplicate channels in one workspace
-    const possibleChannel = await telegramChannelService.findOne({
+    const possibleChannel = await telegramChannelModel.findOne({
       integration: integration._id,
       channelId: forward_from_chat.id,
     });
@@ -74,7 +74,7 @@ bot.on('message', async (msg) => {
       return bot.sendMessage(chatId, 'This channel is already connected to workspace');
     }
 
-    await telegramChannelService.create({
+    await telegramChannelModel.create({
       integration: integration._id,
       channelId: forward_from_chat.id,
     });

@@ -21,7 +21,7 @@ const parseErrors = (validationResult) => {
 
   if (!(validationResult.error instanceof ValidationError)) return [];
   const { error } = validationResult;
-  console.log(validationResult.error)
+
   for (const errorObject of error.details) {
     if (errorObject.type !== 'any.custom') {
       errors.push(getErrorMessage(errorObject));

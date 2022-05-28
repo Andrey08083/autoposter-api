@@ -1,11 +1,11 @@
+const bot = require('../bot');
+
 const integrationService = require('./integrationService');
 const telegramChannelModel = require('../models/telegramChannel');
 const BaseService = require('./baseService');
 
 class TelegramChannelService extends BaseService {
   async getLinkedTelegramChannelsToWorkspace(workspaceId) {
-    const bot = require('../bot');
-
     const telegramIntegration = await integrationService.findOne({
       workspace: workspaceId,
       integrationType: 'Telegram',
