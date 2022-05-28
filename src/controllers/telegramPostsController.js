@@ -21,7 +21,7 @@ const getPosts = async (req, res, next) => {
 
 const sendPostToTelegramChannel = async (req, res, next) => {
   try {
-    const { channelId, postText } = req.body;
+    const { channelId, postText, buttons } = req.body;
 
     const workspace = await workspaceService.findOne({ user: req.user._id });
 
@@ -39,7 +39,12 @@ const sendPostToTelegramChannel = async (req, res, next) => {
 
     const preparedMessage = postText.replace(removeHtmlTagsRegExp, '');
 
-    await bot.sendMessage(channelId, preparedMessage, { parse_mode: 'html' });
+    await bot.sendMessage(channelId, preparedMessage, {
+      parse_mode: 'html',
+      reply_markup: {
+        inline_keyboard: [buttons],
+      },
+    });
 
     await telegramPostService.create({
       workspace: workspace._id,
