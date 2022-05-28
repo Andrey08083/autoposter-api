@@ -12,15 +12,18 @@ const {
 const userRouter = require('./routes/userRoutes');
 const tokenRouter = require('./routes/tokenRoutes');
 const workspaceRouter = require('./routes/workspaceRoutes');
+
 const { errorHandlerMiddleware } = require('./middlewares/errorHandlerMiddleware');
 
 const app = express();
 const bot = require('./bot');
+const scheduler = require('./scheduler');
 
 connectToMongoDb().then((isProduction) => {
   if (isProduction) {
     app.listen(process.env.API_PORT, () => {
       bot.startPolling({ restart: true });
+      scheduler.registerCronJob();
       console.log(`Listening on ${process.env.API_PORT}`);
     });
   } else {

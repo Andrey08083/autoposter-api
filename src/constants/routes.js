@@ -21,6 +21,7 @@ module.exports = {
   POSTS: {
     POSTS_ROUTER: '/posts',
     SEND_POST: '/sendPost',
+    SCHEDULE_POST: '/schedule',
   },
   TOKEN: {
     TOKEN_ROUTER: '/token',
