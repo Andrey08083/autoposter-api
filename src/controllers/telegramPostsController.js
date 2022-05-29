@@ -1,11 +1,14 @@
+const bot = require('../bot');
+
 const workspaceService = require('../services/workspaceService');
 const telegramChannelService = require('../services/telegramChannelService');
 const telegramPostService = require('../services/telegramPostService');
+
 const ApiError = require('../helpers/apiError');
 const { ERRORS } = require('../constants/validation');
 const { BAD_REQUEST, OK } = require('../constants/responseStatus');
 const { removeHtmlTagsRegExp } = require('../constants/regExp');
-const bot = require('../bot');
+const { SENT } = require('../constants/postStatus');
 
 const getPosts = async (req, res, next) => {
   try {
@@ -50,6 +53,7 @@ const sendPostToTelegramChannel = async (req, res, next) => {
       workspace: workspace._id,
       channelId,
       text: preparedMessage,
+      status: SENT,
     });
 
     return res.sendStatus(OK);

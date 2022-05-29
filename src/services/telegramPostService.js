@@ -13,7 +13,7 @@ class TelegramPostService extends BaseService {
 
     const posts = await this.find({
       workspace: workspaceId,
-    }).lean();
+    }).sort({ _id: -1 }).lean();
 
     return posts.map((post) => ({
       ...post,
