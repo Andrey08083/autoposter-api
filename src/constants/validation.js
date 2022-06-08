@@ -26,6 +26,7 @@ module.exports = {
     TOKEN_NOT_FOUND: 'Token not found',
 
     TELEGRAM_CHANNEL_NOT_FOUND: 'Telegram channel not found',
+    TELEGRAM_POST_NOT_FOUND: 'Telegram post not found',
   },
   CUSTOM_ERROR_MESSAGES: {
     'email.emailValidation': 'Incorrect email',

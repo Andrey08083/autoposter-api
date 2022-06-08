@@ -6,9 +6,10 @@ const telegramPostService = require('../services/telegramPostService');
 
 const ApiError = require('../helpers/apiError');
 const { ERRORS } = require('../constants/validation');
-const { BAD_REQUEST, OK } = require('../constants/responseStatus');
+const { BAD_REQUEST, OK, NOT_FOUND } = require('../constants/responseStatus');
 const { removeHtmlTagsRegExp } = require('../constants/regExp');
 const { SENT } = require('../constants/postStatus');
+const { ADMIN } = require('../constants/userRoles');
 
 const getPosts = async (req, res, next) => {
   try {
@@ -101,8 +102,56 @@ const schedulePostToTelegramChannel = async (req, res, next) => {
   }
 };
 
+const sendPostById = async (req, res, next) => {
+  const { workspace, user } = req;
+  const { postId } = req.params;
+
+  const post = await telegramPostService.findOne({ _id: postId });
+
+  if (!post) {
+    return next(new ApiError(NOT_FOUND, ERRORS.TELEGRAM_POST_NOT_FOUND));
+  }
+
+  if (user.role === ADMIN) {
+    await telegramPostService.sendTelegramPost(post);
+    return res.sendStatus(OK);
+  }
+
+  if (post.workspace.toString() !== workspace._id.toString()) {
+    return next(new ApiError(NOT_FOUND, ERRORS.TELEGRAM_POST_NOT_FOUND));
+  }
+
+  await telegramPostService.sendTelegramPost(post);
+  return res.sendStatus(OK);
+};
+
+const deletePostById = async (req, res, next) => {
+  const { workspace, user } = req;
+  const { postId } = req.params;
+
+  const post = await telegramPostService.findOne({ _id: postId });
+
+  if (!post) {
+    return next(new ApiError(NOT_FOUND, ERRORS.TELEGRAM_POST_NOT_FOUND));
+  }
+
+  if (user.role === ADMIN) {
+    await post.remove();
+    return res.sendStatus(OK);
+  }
+
+  if (post.workspace.toString() !== workspace._id.toString()) {
+    return next(new ApiError(NOT_FOUND, ERRORS.TELEGRAM_POST_NOT_FOUND));
+  }
+
+  await post.remove();
+  return res.sendStatus(OK);
+};
+
 module.exports = {
   getPosts,
   sendPostToTelegramChannel,
   schedulePostToTelegramChannel,
+  sendPostById,
+  deletePostById,
 };

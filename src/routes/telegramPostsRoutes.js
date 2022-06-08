@@ -11,6 +11,8 @@ const {
   POSTS: {
     SEND_POST,
     SCHEDULE_POST,
+    SEND_POST_BY_ID,
+    DELETE_POST_BY_ID,
   },
 } = require('../constants/routes');
 
@@ -28,6 +30,18 @@ router.post(
   SCHEDULE_POST,
   validationMiddleware(telegramPostScheduleSchema),
   telegramPostsController.schedulePostToTelegramChannel,
+);
+
+/* /workspace/telegram/posts/:postId/send */
+router.post(
+  SEND_POST_BY_ID,
+  telegramPostsController.sendPostById,
+);
+
+/* /workspace/telegram/posts/:postId */
+router.delete(
+  DELETE_POST_BY_ID,
+  telegramPostsController.deletePostById,
 );
 
 module.exports = router;

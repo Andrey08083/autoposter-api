@@ -3,6 +3,7 @@ const dayjs = require('dayjs');
 dayjs.extend(require('dayjs/plugin/utc'));
 
 const telegramPostsService = require('../services/telegramPostService');
+const { PENDING } = require('../constants/postStatus');
 
 const sendScheduledPosts = async () => {
   const currentTimeStamp = dayjs()
@@ -11,7 +12,8 @@ const sendScheduledPosts = async () => {
     .millisecond(0)
     .valueOf();
 
-  const telegramPosts = await telegramPostsService.find({ sendAt: currentTimeStamp });
+  const telegramPosts = await telegramPostsService
+    .find({ sendAt: currentTimeStamp, status: PENDING });
 
   for (const telegramPost of telegramPosts) {
     await telegramPostsService.sendTelegramPost(telegramPost);

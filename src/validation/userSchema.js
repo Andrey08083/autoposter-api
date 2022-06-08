@@ -21,10 +21,7 @@ const userLoginSchema = joi.object({
     .lowercase()
     .label('emailValidation')
     .required(),
-  password: joi.string()
-    .regex(passwordRegex)
-    .label('passwordValidation')
-    .required(),
+  password: joi.string().required(),
 });
 
 const userRegisterSchema = joi.object({
@@ -43,16 +40,16 @@ const userRegisterSchema = joi.object({
     .required(),
 });
 
-const userUpdateSchema = joi.object({
-  userName: joi.string().regex(nameRegex),
-  password: joi.string().regex(passwordRegex),
-  options: joi.object({
-    timezone: joi.string(), // TODO: Add valid timezones
-  }),
+const changeUserPasswordSchema = joi.object({
+  userId: joi.string().required(),
+  password: joi.string()
+    .regex(passwordRegex)
+    .label('passwordValidation')
+    .required(),
 });
 
 module.exports = {
   userLoginSchema,
   userRegisterSchema,
-  userUpdateSchema,
+  changeUserPasswordSchema,
 };
