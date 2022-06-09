@@ -24,7 +24,8 @@
     "morgan": "^1.10.0",
     "node-cron": "^3.0.0",
     "node-telegram-bot-api": "^0.56.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "request-promise-native": "^1.0.9"
   },
   "devDependencies": {
     "chai": "^4.3.6",

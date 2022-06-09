@@ -10,16 +10,22 @@ const { ERROR, SENT } = require('../constants/postStatus');
 class TelegramPostService extends BaseService {
   async getTelegramPostsByWorkspaceId(workspaceId) {
     const channels = await telegramChannelService.getLinkedTelegramChannelsToWorkspace(workspaceId);
+    const defaultImage = await telegramChannelService.getTelegramDefaultImage();
 
     const posts = await this.find({
       workspace: workspaceId,
     }).sort({ _id: -1 }).lean();
 
-    return posts.map((post) => ({
-      ...post,
-      title: channels
-        .find(({ id: telegramChannelId }) => telegramChannelId === post.channelId)?.title || 'Channel not found',
-    }));
+    return posts.map((post) => {
+      const channel = channels
+        .find(({ id: telegramChannelId }) => telegramChannelId === post.channelId);
+
+      return {
+        ...post,
+        title: channel?.title || 'Channel not found',
+        channelPhoto: channel?.photo || defaultImage,
+      };
+    });
   }
 
   async sendTelegramPost(telegramPost) {
